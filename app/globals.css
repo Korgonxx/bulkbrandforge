@@ -1,0 +1,126 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap');
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+  --font-sans: var(--font-jakarta);
+  --font-mono: var(--font-plex-mono);
+}
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #04070d;
+    --primary: #0099ff;
+    --primary-foreground: #ffffff;
+    --secondary: #d5dbe6;
+    --secondary-foreground: #04070d;
+    --muted: #f3f4f6;
+    --muted-foreground: #6b7280;
+    --accent: #d5dbe6;
+    --accent-foreground: #04070d;
+    --border: #e5e7eb;
+    --input: #e5e7eb;
+    --ring: #0099ff;
+  }
+  .dark {
+    --background: #04070d;
+    --foreground: #ffffff;
+    --primary: #0099ff;
+    --primary-foreground: #ffffff;
+    --secondary: #d5dbe6;
+    --secondary-foreground: #04070d;
+    --muted: #1b1a14;
+    --muted-foreground: #a3a3a3;
+    --accent: #d5dbe6;
+    --accent-foreground: #04070d;
+    --border: #2a2a2a;
+    --input: #2a2a2a;
+    --ring: #0099ff;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+.glass-panel {
+  background: rgba(27, 26, 20, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 153, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.dark .glass-panel {
+  background: rgba(27, 26, 20, 0.6);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.neon-text-blue {
+  text-shadow:
+    0 0 10px rgba(0, 153, 255, 0.7),
+    0 0 20px rgba(0, 153, 255, 0.5);
+}
+
+.neon-text-light {
+  text-shadow:
+    0 0 10px rgba(213, 219, 230, 0.7),
+    0 0 20px rgba(213, 219, 230, 0.5);
+}
+
+.neon-border-blue {
+  box-shadow:
+    0 0 10px rgba(0, 153, 255, 0.5),
+    inset 0 0 10px rgba(0, 153, 255, 0.2);
+  border-color: rgba(0, 153, 255, 0.5);
+}
+
+.neon-border-light {
+  box-shadow:
+    0 0 10px rgba(213, 219, 230, 0.5),
+    inset 0 0 10px rgba(213, 219, 230, 0.2);
+  border-color: rgba(213, 219, 230, 0.5);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
