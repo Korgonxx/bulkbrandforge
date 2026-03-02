@@ -392,7 +392,7 @@ export function AssetsLibrary() {
             return (
               <div key={i} className="group relative aspect-square bg-muted/50 border border-border overflow-hidden rounded-lg p-6 flex flex-col items-center justify-center hover:bg-muted transition-colors duration-300">
                 <div className="relative w-full h-full flex items-center justify-center">
-                  <Image src={url} alt={`3D Asset ${i+1}`} fill className="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 drop-shadow-2xl" referrerPolicy="no-referrer" />
+                  <Image src={main/public/3d-assets/tpose_back.png} alt={`3D Asset ${i+1}`} fill className="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 drop-shadow-2xl" referrerPolicy="no-referrer" />
                 </div>
                 <div className="absolute inset-0 bg-background/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center z-20">
                   <button 
