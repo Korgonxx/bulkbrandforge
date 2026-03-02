@@ -388,7 +388,7 @@ export function AssetsLibrary() {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
           {Array.from({ length: 8 }).map((_, i) => {
-            const url = `https://api.dicebear.com/7.x/shapes/svg?seed=bulk3d${i}&backgroundColor=transparent`;
+            const url = `main/public/3d-assets/tpose_back.pngseed=bulk3d${i}&backgroundColor=transparent`;
             return (
               <div key={i} className="group relative aspect-square bg-muted/50 border border-border overflow-hidden rounded-lg p-6 flex flex-col items-center justify-center hover:bg-muted transition-colors duration-300">
                 <div className="relative w-full h-full flex items-center justify-center">
