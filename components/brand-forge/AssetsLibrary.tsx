@@ -66,7 +66,7 @@ export function AssetsLibrary() {
               LOGOS
             </h2>
             <p className="text-muted-foreground font-mono mt-2">
-              Core brand identifiers
+              Core brand identifiers (/public/logos)
             </p>
           </div>
           <button
@@ -78,17 +78,22 @@ export function AssetsLibrary() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {["Primary Logo", "Icon Only", "Wordmark", "Monochrome"].map(
-            (logo, i) => (
+          {[
+            { name: "Logo Light", file: "BULK-Logo-Light.svg" },
+            { name: "Logo Only", file: "BULK-Logo-Only.svg" },
+            { name: "Logomark Dark", file: "BULK-Logomark-Dark.svg" },
+            { name: "Logomark Light", file: "BULK-Logomark-Light.svg" },
+          ].map((logo, i) => {
+            const url = `/logos/${logo.file}`;
+            return (
               <div key={i} className="group flex flex-col">
                 <div className="h-48 bg-muted border border-border flex items-center justify-center relative overflow-hidden group-hover:border-primary transition-colors p-8">
                   <div className="relative w-full h-full flex items-center justify-center">
                     <Image
-                      src={`https://api.dicebear.com/7.x/shapes/svg?seed=logo${i}&backgroundColor=transparent`}
-                      alt={logo}
+                      src={url}
+                      alt={logo.name}
                       fill
-                      className={`object-contain transition-transform duration-500 group-hover:scale-110 ${i === 3 ? "grayscale" : ""}`}
-                      referrerPolicy="no-referrer"
+                      className="object-contain transition-transform duration-500 group-hover:scale-110"
                     />
                   </div>
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -96,24 +101,22 @@ export function AssetsLibrary() {
                 <div className="p-4 border border-t-0 border-border bg-background flex flex-col space-y-4">
                   <div>
                     <h3 className="font-bold uppercase tracking-wider">
-                      {logo}
+                      {logo.name}
                     </h3>
                     <p className="text-xs text-muted-foreground font-mono mt-1">
                       Standard usage
                     </p>
                   </div>
-                  <div className="flex gap-2">
-                    <button className="flex-1 py-2 bg-muted border border-border hover:border-primary hover:text-primary transition-colors text-xs font-mono uppercase tracking-widest flex items-center justify-center">
-                      PNG
-                    </button>
-                    <button className="flex-1 py-2 bg-muted border border-border hover:border-[#d5dbe6] hover:text-secondary transition-colors text-xs font-mono uppercase tracking-widest flex items-center justify-center">
-                      SVG
-                    </button>
-                  </div>
+                  <button
+                    onClick={(e) => handleDownload(e, url, logo.file)}
+                    className="w-full py-2 bg-muted border border-border hover:border-primary hover:text-primary transition-colors text-xs font-mono uppercase tracking-widest flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" /> Download
+                  </button>
                 </div>
               </div>
-            ),
-          )}
+            );
+          })}
         </div>
       </section>
 
@@ -409,6 +412,7 @@ export function AssetsLibrary() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
           {[
             "tpose_back.png",
+            "tpose_front.png",
             "tpose_side.png",
           ].map((filename, i) => {
             const url = `/3d-assets/${filename}`;
