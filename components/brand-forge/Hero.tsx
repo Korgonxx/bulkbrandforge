@@ -14,7 +14,7 @@ export function Hero() {
       particleCount: 100,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ["#0099ff", "#d5dbe6", "#FFFFFF"],
+      colors: ["#0046FF", "#73C8D2", "#F5F1DC"],
     });
     setTimeout(() => setActiveTab("forge"), 1000);
   };

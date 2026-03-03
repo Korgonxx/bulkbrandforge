@@ -19,6 +19,13 @@ import {
   Unlock,
   Group,
   Ungroup,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignVerticalSpaceAround,
+  AlignHorizontalSpaceAround,
+  ChevronDown,
+  X,
 } from "lucide-react";
 import { SketchPicker } from "react-color";
 
@@ -36,9 +43,28 @@ export function BannerForge() {
   const [canRedo, setCanRedo] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showBgColorPicker, setShowBgColorPicker] = useState(false);
-  const [showStickerPicker, setShowStickerPicker] = useState(false);
-  const [showBackgroundPicker, setShowBackgroundPicker] = useState(false);
-  const [show3dPicker, setShow3dPicker] = useState(false);
+  const [showGradientPicker, setShowGradientPicker] = useState(false);
+  const [gradientColor1, setGradientColor1] = useState("#0046FF");
+  const [gradientColor2, setGradientColor2] = useState("#04070d");
+  const [showStickers, setShowStickers] = useState(false);
+  const [showBackgrounds, setShowBackgrounds] = useState(false);
+  const [show3DAssets, setShow3DAssets] = useState(false);
+  const [showFontDropdown, setShowFontDropdown] = useState(false);
+  const [customFonts, setCustomFonts] = useState<string[]>([]);
+  const [grainIntensity, setGrainIntensity] = useState<number>(0);
+  const [bgBlurIntensity, setBgBlurIntensity] = useState<number>(0);
+  const [imageBlurIntensity, setImageBlurIntensity] = useState<number>(0);
+
+  const STANDARD_FONTS = [
+    "Plus Jakarta Sans", "IBM Plex Mono", "Anton", "Space Grotesk", 
+    "Outfit", "Inter", "Roboto", "Playfair Display", 
+    "Cormorant Garamond", "Libre Baskerville",
+    "Bebas Neue", "Oswald", "Righteous", "Cinzel", "Lobster",
+    "Pacifico", "Dancing Script", "Caveat", "Permanent Marker",
+    "Fredoka", "Bangers", "Press Start 2P", "Creepster",
+    "Russo One", "Orbitron", "Syncopate", "Monoton",
+    "Audiowide", "Silkscreen", "Chakra Petch", "Syne"
+  ];
 
   const saveHistory = useCallback(() => {
     const currentCanvas = fabricCanvasRef.current;
@@ -98,12 +124,12 @@ export function BannerForge() {
       left: 400,
       top: 200,
       fontFamily: "Plus Jakarta Sans",
-      fill: "#FFFFFF",
+      fill: "#F5F1DC",
       fontSize: 60,
       originX: "center",
       originY: "center",
       shadow: new fabric.Shadow({
-        color: "#0099ff",
+        color: "#0046FF",
         blur: 20,
         offsetX: 0,
         offsetY: 0,
@@ -113,13 +139,32 @@ export function BannerForge() {
     initCanvas.add(text);
     initCanvas.setActiveObject(text);
 
-    initCanvas.on("selection:created", (e) =>
-      setActiveObject(e.selected?.[0] || null),
-    );
-    initCanvas.on("selection:updated", (e) =>
-      setActiveObject(e.selected?.[0] || null),
-    );
-    initCanvas.on("selection:cleared", () => setActiveObject(null));
+    initCanvas.on("selection:created", (e) => {
+      const obj = e.selected?.[0] || null;
+      setActiveObject(obj);
+      if (obj && obj.type === 'image') {
+        const img = obj as fabric.Image;
+        const blurFilter = img.filters?.find(f => f.type === 'Blur') as any;
+        setImageBlurIntensity(blurFilter ? blurFilter.blur : 0);
+      } else {
+        setImageBlurIntensity(0);
+      }
+    });
+    initCanvas.on("selection:updated", (e) => {
+      const obj = e.selected?.[0] || null;
+      setActiveObject(obj);
+      if (obj && obj.type === 'image') {
+        const img = obj as fabric.Image;
+        const blurFilter = img.filters?.find(f => f.type === 'Blur') as any;
+        setImageBlurIntensity(blurFilter ? blurFilter.blur : 0);
+      } else {
+        setImageBlurIntensity(0);
+      }
+    });
+    initCanvas.on("selection:cleared", () => {
+      setActiveObject(null);
+      setImageBlurIntensity(0);
+    });
 
     // History events
     initCanvas.on("object:modified", saveHistory);
@@ -164,7 +209,7 @@ export function BannerForge() {
     if (!canvas || !activeObject || activeObject.type !== "i-text") return;
     const textObj = activeObject as fabric.IText;
     
-    const currentFill = textObj.fill === "transparent" ? "#FFFFFF" : textObj.fill;
+    const currentFill = textObj.fill === "transparent" ? "#F5F1DC" : textObj.fill;
     
     textObj.set({
       shadow: null,
@@ -177,22 +222,40 @@ export function BannerForge() {
       case "None":
         break;
       case "3D":
-        textObj.set("shadow", new fabric.Shadow({ color: "#0099ff", blur: 0, offsetX: 4, offsetY: 4 }));
+        textObj.set("shadow", new fabric.Shadow({ color: "#0046FF", blur: 0, offsetX: 4, offsetY: 4 }));
         break;
       case "Neon":
-        textObj.set("shadow", new fabric.Shadow({ color: "#0099ff", blur: 20, offsetX: 0, offsetY: 0 }));
+        textObj.set("shadow", new fabric.Shadow({ color: "#0046FF", blur: 20, offsetX: 0, offsetY: 0 }));
         break;
       case "Outline":
-        textObj.set({ fill: "transparent", stroke: "#FFFFFF", strokeWidth: 2 });
+        textObj.set({ fill: "transparent", stroke: "#F5F1DC", strokeWidth: 2 });
         break;
       case "Drop Shadow":
         textObj.set("shadow", new fabric.Shadow({ color: "rgba(0,0,0,0.8)", blur: 10, offsetX: 5, offsetY: 5 }));
         break;
       case "Glitch":
-        textObj.set("shadow", new fabric.Shadow({ color: "#00ffff", blur: 0, offsetX: -3, offsetY: 0 }));
+        textObj.set("shadow", new fabric.Shadow({ color: "#73C8D2", blur: 0, offsetX: -3, offsetY: 0 }));
         break;
       case "Vintage":
-        textObj.set({ fill: "#d5dbe6", shadow: new fabric.Shadow({ color: "#2a2a2a", blur: 0, offsetX: 6, offsetY: 6 }) });
+        textObj.set({ fill: "#73C8D2", shadow: new fabric.Shadow({ color: "#2a2a2a", blur: 0, offsetX: 6, offsetY: 6 }) });
+        break;
+      case "Pop Art":
+        textObj.set({ stroke: "#000000", strokeWidth: 2, shadow: new fabric.Shadow({ color: "#000000", blur: 0, offsetX: 5, offsetY: 5 }) });
+        break;
+      case "Floating":
+        textObj.set("shadow", new fabric.Shadow({ color: "rgba(0,0,0,0.6)", blur: 20, offsetX: 0, offsetY: 15 }));
+        break;
+      case "Glow":
+        textObj.set("shadow", new fabric.Shadow({ color: "#F5F1DC", blur: 15, offsetX: 0, offsetY: 0 }));
+        break;
+      case "Cyberpunk":
+        textObj.set({ stroke: "#FF9013", strokeWidth: 1, shadow: new fabric.Shadow({ color: "#73C8D2", blur: 2, offsetX: 3, offsetY: 3 }) });
+        break;
+      case "Double":
+        textObj.set({ fill: "transparent", stroke: currentFill, strokeWidth: 1, shadow: new fabric.Shadow({ color: currentFill as string, blur: 0, offsetX: 4, offsetY: 4 }) });
+        break;
+      case "Soft":
+        textObj.set("shadow", new fabric.Shadow({ color: currentFill as string, blur: 25, offsetX: 0, offsetY: 0 }));
         break;
     }
     canvas.requestRenderAll();
@@ -206,13 +269,116 @@ export function BannerForge() {
     saveHistory();
   };
 
-  const handleBgColorChange = (color: string) => {
+  const handleBgColorChange = (color: string, skipHistory = false) => {
     setBgColor(color);
     if (canvas) {
       canvas.set("backgroundColor", color);
       canvas.requestRenderAll();
-      saveHistory();
+      if (!skipHistory) saveHistory();
     }
+  };
+
+  const applyGradientBg = (color1: string, color2: string, skipHistory = false) => {
+    if (!canvas) return;
+    const gradient = new fabric.Gradient({
+      type: 'linear',
+      coords: { x1: 0, y1: 0, x2: canvas.width!, y2: canvas.height! },
+      colorStops: [
+        { offset: 0, color: color1 },
+        { offset: 1, color: color2 }
+      ]
+    });
+    canvas.set("backgroundColor", gradient);
+    canvas.requestRenderAll();
+    if (!skipHistory) saveHistory();
+  };
+
+  const handleFontUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    try {
+      const fontName = file.name.split('.')[0].replace(/[^a-zA-Z0-9]/g, '');
+      const fontUrl = URL.createObjectURL(file);
+      const font = new FontFace(fontName, `url(${fontUrl})`);
+      
+      await font.load();
+      document.fonts.add(font);
+      
+      setCustomFonts(prev => [...prev, fontName]);
+      changeFontFamily(fontName);
+      setShowFontDropdown(false);
+    } catch (error) {
+      console.error("Error loading font:", error);
+      alert("Failed to load font. Please try a valid .ttf, .otf, or .woff file.");
+    }
+  };
+
+  const applyGrain = (intensity: number) => {
+    if (!canvas) return;
+    
+    if (intensity === 0) {
+      canvas.set('overlayImage', null);
+      canvas.requestRenderAll();
+      return;
+    }
+    
+    const noiseCanvas = document.createElement('canvas');
+    noiseCanvas.width = canvas.width || 800;
+    noiseCanvas.height = canvas.height || 400;
+    const ctx = noiseCanvas.getContext('2d');
+    if (!ctx) return;
+    
+    const imgData = ctx.createImageData(noiseCanvas.width, noiseCanvas.height);
+    for (let i = 0; i < imgData.data.length; i += 4) {
+      const val = Math.random() * 255;
+      imgData.data[i] = val;
+      imgData.data[i+1] = val;
+      imgData.data[i+2] = val;
+      imgData.data[i+3] = intensity * 255;
+    }
+    ctx.putImageData(imgData, 0, 0);
+    
+    fabric.Image.fromURL(noiseCanvas.toDataURL()).then((img) => {
+      img.set({
+        originX: 'left',
+        originY: 'top',
+        left: 0,
+        top: 0,
+        evented: false,
+        selectable: false
+      });
+      canvas.set('overlayImage', img);
+      canvas.requestRenderAll();
+    });
+  };
+
+  const applyBgBlur = (intensity: number) => {
+    setBgBlurIntensity(intensity);
+    if (!canvas || !canvas.backgroundImage) return;
+    
+    const bgImg = canvas.backgroundImage as fabric.Image;
+    if (!bgImg.applyFilters) return;
+
+    bgImg.filters = bgImg.filters?.filter(f => f.type !== 'Blur') || [];
+    if (intensity > 0) {
+      bgImg.filters.push(new fabric.filters.Blur({ blur: intensity }));
+    }
+    bgImg.applyFilters();
+    canvas.requestRenderAll();
+  };
+
+  const applyImageBlur = (intensity: number) => {
+    setImageBlurIntensity(intensity);
+    if (!canvas || !activeObject || activeObject.type !== "image") return;
+    
+    const img = activeObject as fabric.Image;
+    img.filters = img.filters?.filter(f => f.type !== 'Blur') || [];
+    if (intensity > 0) {
+      img.filters.push(new fabric.filters.Blur({ blur: intensity }));
+    }
+    img.applyFilters();
+    canvas.requestRenderAll();
   };
 
   const addText = () => {
@@ -221,7 +387,7 @@ export function BannerForge() {
       left: 400,
       top: 200,
       fontFamily: "Plus Jakarta Sans",
-      fill: "#FFFFFF",
+      fill: "#F5F1DC",
       fontSize: 40,
       originX: "center",
       originY: "center",
@@ -252,36 +418,10 @@ export function BannerForge() {
     reader.readAsDataURL(file);
   };
 
-  // asset lists matching public folder
-  const stickerFiles = [
-    "1-lfg.png",
-    "2-downbad.png",
-    "3-salute.png",
-    "4-uwu.png",
-    "5-liquidated.png",
-    "6-notliquidated.png",
-    "7-pray.png",
-    "8-fighter.png",
-    "9-heart.png",
-    "10-gBULK.png",
-    "11-wave.png",
-  ];
-  const backgroundFiles = [
-    "Card_Stock Exchange Era.png",
-    "Card_BULK Era_Metadata.png",
-    "Card_Phoenician Roman Era.png",
-    "Card_Prehistoric Era.png",
-    "Card_Industrial Victorian Era.png",
-    "Card_Viking Era.png",
-    "Card_BULK Era_Banner.png",
-    "Card_TransSahara Era.png",
-  ];
-  const asset3dFiles = ["tpose_back.png", "tpose_front.png", "tpose_side.png"];
-
-  const addImageToCanvas = (url: string, scale = 100) => {
+  const addStickerFromUrl = (url: string) => {
     if (!canvas) return;
     fabric.Image.fromURL(url).then((img) => {
-      img.scaleToWidth(scale);
+      img.scaleToWidth(150);
       img.set({
         left: 400,
         top: 200,
@@ -290,35 +430,47 @@ export function BannerForge() {
       });
       canvas.add(img);
       canvas.setActiveObject(img);
+      setShowStickers(false);
+      setShow3DAssets(false);
       saveHistory();
     });
   };
 
-  const addSticker = (url?: string) => {
-    // if url is provided use it else fallback to random
-    if (!canvas) return;
-    if (url) {
-      addImageToCanvas(url, 100);
-      return;
-    }
-    const randomSeed = Math.floor(Math.random() * 1000);
-    const rndUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=sticker${randomSeed}&backgroundColor=transparent`;
-    addImageToCanvas(rndUrl, 100);
-  };
-
-  const setBackgroundFromUrl = (url: string) => {
+  const setBackgroundImage = (url: string) => {
     if (!canvas) return;
     fabric.Image.fromURL(url).then((img) => {
-      img.scaleToWidth(canvas.getWidth());
-      img.scaleToHeight(canvas.getHeight());
-      // fabric types omit setBackgroundImage signature, cast to any
-      (canvas as any).setBackgroundImage(img, canvas.renderAll.bind(canvas));
+      const scale = Math.max(canvas.width! / img.width!, canvas.height! / img.height!);
+      img.set({
+        scaleX: scale,
+        scaleY: scale,
+        originX: "center",
+        originY: "center",
+        left: canvas.width! / 2,
+        top: canvas.height! / 2,
+      });
+      canvas.set("backgroundImage", img);
+      canvas.requestRenderAll();
+      setShowBackgrounds(false);
       saveHistory();
     });
   };
 
-  const add3dAsset = (url: string) => {
-    addImageToCanvas(url, 150);
+  const addSticker = () => {
+    if (!canvas) return;
+    const randomSeed = Math.floor(Math.random() * 1000);
+    const url = `https://api.dicebear.com/7.x/bottts/svg?seed=sticker${randomSeed}&backgroundColor=transparent`;
+    
+    fabric.Image.fromURL(url).then((img) => {
+      img.scaleToWidth(100);
+      img.set({
+        left: 400,
+        top: 200,
+        originX: "center",
+        originY: "center",
+      });
+      canvas.add(img);
+      canvas.setActiveObject(img);
+    });
   };
 
   const deleteSelected = () => {
@@ -342,11 +494,11 @@ export function BannerForge() {
     saveHistory();
   };
 
-  const changeTextColor = (color: string) => {
+  const changeTextColor = (color: string, skipHistory = false) => {
     if (!canvas || !activeObject || activeObject.type !== "i-text") return;
     activeObject.set("fill", color);
     canvas.requestRenderAll();
-    saveHistory();
+    if (!skipHistory) saveHistory();
   };
 
   const toggleLock = () => {
@@ -390,6 +542,40 @@ export function BannerForge() {
     canvas.add(...items);
     const selection = new fabric.ActiveSelection(items, { canvas });
     canvas.setActiveObject(selection);
+    canvas.requestRenderAll();
+    saveHistory();
+  };
+
+  const alignObject = (alignment: 'left' | 'center' | 'right' | 'top' | 'middle' | 'bottom') => {
+    if (!canvas || !activeObject) return;
+    
+    const objWidth = activeObject.getScaledWidth();
+    const objHeight = activeObject.getScaledHeight();
+    const canvasWidth = canvas.width!;
+    const canvasHeight = canvas.height!;
+
+    switch (alignment) {
+      case 'left':
+        activeObject.set({ left: activeObject.originX === 'center' ? objWidth / 2 : 0 });
+        break;
+      case 'center':
+        activeObject.set({ left: canvasWidth / 2 });
+        break;
+      case 'right':
+        activeObject.set({ left: activeObject.originX === 'center' ? canvasWidth - objWidth / 2 : canvasWidth - objWidth });
+        break;
+      case 'top':
+        activeObject.set({ top: activeObject.originY === 'center' ? objHeight / 2 : 0 });
+        break;
+      case 'middle':
+        activeObject.set({ top: canvasHeight / 2 });
+        break;
+      case 'bottom':
+        activeObject.set({ top: activeObject.originY === 'center' ? canvasHeight - objHeight / 2 : canvasHeight - objHeight });
+        break;
+    }
+    
+    activeObject.setCoords();
     canvas.requestRenderAll();
     saveHistory();
   };
@@ -450,72 +636,31 @@ export function BannerForge() {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 onChange={handleImageUpload}
               />
-              <button className="w-full py-3 px-4 bg-muted border border-border hover:border-[#d5dbe6] hover:text-secondary transition-colors flex items-center text-xs font-mono uppercase tracking-widest">
+              <button className="w-full py-3 px-4 bg-muted border border-border hover:border-[#73C8D2] hover:text-secondary transition-colors flex items-center text-xs font-mono uppercase tracking-widest">
                 <Upload className="mr-3 h-4 w-4" /> Upload Image
               </button>
             </div>
 
-            <div className="space-y-2">
-              <button 
-                className="w-full py-3 px-4 bg-muted border border-border hover:border-primary hover:text-primary transition-colors flex items-center text-xs font-mono uppercase tracking-widest"
-                onClick={() => setShowStickerPicker(!showStickerPicker)}
-              >
-                <Layers className="mr-3 h-4 w-4" /> Choose Sticker
-              </button>
-              <button 
-                className="w-full py-3 px-4 bg-muted border border-border hover:border-primary hover:text-primary transition-colors flex items-center text-xs font-mono uppercase tracking-widest"
-                onClick={() => addSticker()}
-              >
-                <Layers className="mr-3 h-4 w-4" /> Random Sticker
-              </button>
-            </div>
+            <button 
+              className="w-full py-3 px-4 bg-muted border border-border hover:border-primary hover:text-primary transition-colors flex items-center text-xs font-mono uppercase tracking-widest"
+              onClick={() => { setShowStickers(!showStickers); setShowBackgrounds(false); setShow3DAssets(false); }}
+            >
+              <Layers className="mr-3 h-4 w-4" /> Add Sticker
+            </button>
 
-            {/* pickers */}
-            {showStickerPicker && (
-              <div className="grid grid-cols-3 gap-2 p-2 border border-border bg-background">
-                {stickerFiles.map((f) => (
-                  <img
-                    key={f}
-                    src={`/stickers/${f}`}
-                    className="w-full h-auto cursor-pointer"
-                    onClick={() => {
-                      addSticker(`/stickers/${f}`);
-                      setShowStickerPicker(false);
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-            {showBackgroundPicker && (
-              <div className="grid grid-cols-2 gap-2 p-2 border border-border bg-background">
-                {backgroundFiles.map((f) => (
-                  <img
-                    key={f}
-                    src={`/backgrounds/${f}`}
-                    className="w-full h-auto cursor-pointer"
-                    onClick={() => {
-                      setBackgroundFromUrl(`/backgrounds/${f}`);
-                      setShowBackgroundPicker(false);
-                    }}
-                  />
-                ))}
-              </div>
-            )}
-            {show3dPicker && (
-              <div className="grid grid-cols-3 gap-2 p-2 border border-border bg-background">
-                {asset3dFiles.map((f) => (
-                  <img
-                    key={f}
-                    src={`/3d-assets/${f}`}
-                    className="w-full h-auto cursor-pointer"
-                    onClick={() => {
-                      add3dAsset(`/3d-assets/${f}`);
-                      setShow3dPicker(false);
-                    }}
-                  />
-                ))}
-              </div>
-            )}
+            <button 
+              className="w-full py-3 px-4 bg-muted border border-border hover:border-secondary hover:text-secondary transition-colors flex items-center text-xs font-mono uppercase tracking-widest"
+              onClick={() => { setShowBackgrounds(!showBackgrounds); setShowStickers(false); setShow3DAssets(false); }}
+            >
+              <ImageIcon className="mr-3 h-4 w-4" /> Add Background
+            </button>
+
+            <button 
+              className="w-full py-3 px-4 bg-muted border border-border hover:border-[#FF9013] hover:text-[#FF9013] transition-colors flex items-center text-xs font-mono uppercase tracking-widest"
+              onClick={() => { setShow3DAssets(!show3DAssets); setShowStickers(false); setShowBackgrounds(false); }}
+            >
+              <Layers className="mr-3 h-4 w-4" /> Add 3D Asset
+            </button>
           </div>
         </div>
 
@@ -533,23 +678,97 @@ export function BannerForge() {
             <div className="space-y-2">
               <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest flex items-center justify-between">
                 <span className="flex items-center"><Palette className="w-3 h-3 mr-1" /> CANVAS BG</span>
-                <button 
-                  onClick={() => setShowBgColorPicker(!showBgColorPicker)}
-                  className="text-primary hover:text-primary/80"
-                >
-                  Custom
-                </button>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => { setShowBgColorPicker(!showBgColorPicker); setShowGradientPicker(false); }}
+                    className="text-primary hover:text-primary/80"
+                  >
+                    Solid
+                  </button>
+                  <button 
+                    onClick={() => { setShowGradientPicker(!showGradientPicker); setShowBgColorPicker(false); }}
+                    className="text-secondary hover:text-secondary/80"
+                  >
+                    Gradient
+                  </button>
+                </div>
               </label>
               {showBgColorPicker && (
                 <div className="absolute z-50 mt-2">
                   <div className="fixed inset-0" onClick={() => setShowBgColorPicker(false)} />
                   <div className="relative">
-                    <SketchPicker color={bgColor} onChange={(color) => handleBgColorChange(color.hex)} />
+                    <SketchPicker 
+                      color={bgColor} 
+                      onChange={(color) => handleBgColorChange(color.hex, true)} 
+                      onChangeComplete={(color) => { handleBgColorChange(color.hex, true); saveHistory(); }}
+                    />
+                  </div>
+                </div>
+              )}
+              {showGradientPicker && (
+                <div className="absolute z-50 mt-2 p-4 bg-background border border-border space-y-4 shadow-xl w-[280px]">
+                  <div className="fixed inset-0" onClick={() => setShowGradientPicker(false)} />
+                  <div className="relative space-y-4">
+                    <div className="flex gap-4 justify-between">
+                      <div className="flex-1">
+                        <label className="text-[10px] text-muted-foreground font-mono uppercase mb-2 block">Color 1</label>
+                        <div className="relative">
+                          <button 
+                            className="w-full h-8 border border-border" 
+                            style={{ backgroundColor: gradientColor1 }}
+                            onClick={() => {
+                              const picker = document.getElementById('picker1');
+                              if (picker) picker.style.display = picker.style.display === 'none' ? 'block' : 'none';
+                            }}
+                          />
+                          <div id="picker1" className="absolute top-10 left-0 z-10 hidden">
+                            <SketchPicker 
+                              color={gradientColor1} 
+                              onChange={(color) => { setGradientColor1(color.hex); applyGradientBg(color.hex, gradientColor2, true); }} 
+                              onChangeComplete={(color) => { setGradientColor1(color.hex); applyGradientBg(color.hex, gradientColor2, true); saveHistory(); }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex-1">
+                        <label className="text-[10px] text-muted-foreground font-mono uppercase mb-2 block">Color 2</label>
+                        <div className="relative">
+                          <button 
+                            className="w-full h-8 border border-border" 
+                            style={{ backgroundColor: gradientColor2 }}
+                            onClick={() => {
+                              const picker = document.getElementById('picker2');
+                              if (picker) picker.style.display = picker.style.display === 'none' ? 'block' : 'none';
+                            }}
+                          />
+                          <div id="picker2" className="absolute top-10 right-0 z-10 hidden">
+                            <SketchPicker 
+                              color={gradientColor2} 
+                              onChange={(color) => { setGradientColor2(color.hex); applyGradientBg(gradientColor1, color.hex, true); }} 
+                              onChangeComplete={(color) => { setGradientColor2(color.hex); applyGradientBg(gradientColor1, color.hex, true); saveHistory(); }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] text-muted-foreground font-mono uppercase">Presets</label>
+                      <div className="grid grid-cols-5 gap-2">
+                        <button className="w-full aspect-square rounded-none border border-transparent hover:border-white transition-all" style={{ background: "linear-gradient(to right, #0046FF, #04070d)" }} onClick={() => { setGradientColor1("#0046FF"); setGradientColor2("#04070d"); applyGradientBg("#0046FF", "#04070d"); }} title="Brand Blue Dark" />
+                        <button className="w-full aspect-square rounded-none border border-transparent hover:border-white transition-all" style={{ background: "linear-gradient(to right, #73C8D2, #2a2a2a)" }} onClick={() => { setGradientColor1("#73C8D2"); setGradientColor2("#2a2a2a"); applyGradientBg("#73C8D2", "#2a2a2a"); }} title="Silver Dark" />
+                        <button className="w-full aspect-square rounded-none border border-transparent hover:border-white transition-all" style={{ background: "linear-gradient(to right, #FF9013, #73C8D2)" }} onClick={() => { setGradientColor1("#FF9013"); setGradientColor2("#73C8D2"); applyGradientBg("#FF9013", "#73C8D2"); }} title="Cyberpunk" />
+                        <button className="w-full aspect-square rounded-none border border-transparent hover:border-white transition-all" style={{ background: "linear-gradient(to right, #F5F1DC, #0046FF)" }} onClick={() => { setGradientColor1("#F5F1DC"); setGradientColor2("#0046FF"); applyGradientBg("#F5F1DC", "#0046FF"); }} title="White Blue" />
+                        <button className="w-full aspect-square rounded-none border border-transparent hover:border-white transition-all" style={{ background: "linear-gradient(to right, #04070d, #1b1a14)" }} onClick={() => { setGradientColor1("#04070d"); setGradientColor2("#1b1a14"); applyGradientBg("#04070d", "#1b1a14"); }} title="Deep Dark" />
+                        <button className="w-full aspect-square rounded-none border border-transparent hover:border-white transition-all" style={{ background: "linear-gradient(to right, #FF9013, #04070d)" }} onClick={() => { setGradientColor1("#FF9013"); setGradientColor2("#04070d"); applyGradientBg("#FF9013", "#04070d"); }} title="Red Dark" />
+                        <button className="w-full aspect-square rounded-none border border-transparent hover:border-white transition-all" style={{ background: "linear-gradient(to right, #73C8D2, #0046FF)" }} onClick={() => { setGradientColor1("#73C8D2"); setGradientColor2("#0046FF"); applyGradientBg("#73C8D2", "#0046FF"); }} title="Green Blue" />
+                        <button className="w-full aspect-square rounded-none border border-transparent hover:border-white transition-all" style={{ background: "linear-gradient(to right, #F5F1DC, #73C8D2)" }} onClick={() => { setGradientColor1("#F5F1DC"); setGradientColor2("#73C8D2"); applyGradientBg("#F5F1DC", "#73C8D2"); }} title="Clean White" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
               <div className="flex gap-2">
-                {["#04070d", "#1b1a14", "#2a2a2a", "#0099ff", "#d5dbe6", "#ffffff"].map((color) => (
+                {["#04070d", "#1b1a14", "#2a2a2a", "#0046FF", "#73C8D2", "#F5F1DC"].map((color) => (
                   <button
                     key={color}
                     className={`w-8 h-8 rounded-none border transition-all ${bgColor === color ? 'border-white scale-110' : 'border-transparent hover:border-gray-500'}`}
@@ -560,23 +779,77 @@ export function BannerForge() {
               </div>
             </div>
 
+            <div className="space-y-2 pt-4 border-t border-border">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
+                  BACKGROUND BLUR
+                </label>
+                <span className="text-[10px] font-mono text-primary">{bgBlurIntensity.toFixed(2)}</span>
+              </div>
+              <input 
+                type="range" min="0" max="1" step="0.05" 
+                value={bgBlurIntensity}
+                onChange={(e) => applyBgBlur(parseFloat(e.target.value))}
+                onMouseUp={saveHistory}
+                onTouchEnd={saveHistory}
+                className="w-full accent-primary h-1 bg-muted rounded-lg appearance-none cursor-pointer"
+              />
+            </div>
+
+            <div className="space-y-2 pt-4 border-t border-border">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
+                  GRAIN EFFECT
+                </label>
+                <span className="text-[10px] font-mono text-primary">{grainIntensity.toFixed(2)}</span>
+              </div>
+              <input 
+                type="range" min="0" max="0.5" step="0.05" 
+                value={grainIntensity}
+                onChange={(e) => setGrainIntensity(parseFloat(e.target.value))}
+                onMouseUp={(e) => { applyGrain(parseFloat(e.currentTarget.value)); saveHistory(); }}
+                onTouchEnd={(e) => { applyGrain(parseFloat(e.currentTarget.value)); saveHistory(); }}
+                className="w-full accent-primary h-1 bg-muted rounded-lg appearance-none cursor-pointer"
+              />
+            </div>
+
             {activeObject && activeObject.type === "i-text" && (
               <div className="space-y-4 pt-4 border-t border-border">
-                <div className="space-y-2">
+                <div className="space-y-2 relative">
                   <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
                     FONT FAMILY
                   </label>
-                  <select 
-                    className="w-full bg-muted border border-border text-foreground text-xs p-2 font-mono outline-none focus:border-primary"
-                    onChange={(e) => changeFontFamily(e.target.value)}
-                    value={(activeObject as fabric.IText).fontFamily || "Plus Jakarta Sans"}
-                  >
-                    <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
-                    <option value="IBM Plex Mono">IBM Plex Mono</option>
-                    <option value="Anton">Anton</option>
-                    <option value="Space Grotesk">Space Grotesk</option>
-                    <option value="Outfit">Outfit</option>
-                  </select>
+                  <div className="relative">
+                    <button
+                      className="w-full bg-muted border border-border text-foreground text-xs p-2 font-mono outline-none focus:border-primary flex justify-between items-center"
+                      onClick={() => setShowFontDropdown(!showFontDropdown)}
+                    >
+                      <span style={{ fontFamily: (activeObject as fabric.IText).fontFamily }}>
+                        {(activeObject as fabric.IText).fontFamily || "Plus Jakarta Sans"}
+                      </span>
+                      <ChevronDown className="w-4 h-4" />
+                    </button>
+                    {showFontDropdown && (
+                      <div className="absolute z-50 w-full mt-1 bg-background border border-border shadow-xl max-h-60 overflow-y-auto">
+                        {[...STANDARD_FONTS, ...customFonts].map(font => (
+                          <button
+                            key={font}
+                            className="w-full text-left px-3 py-2 hover:bg-muted text-sm"
+                            style={{ fontFamily: font }}
+                            onClick={() => { changeFontFamily(font); setShowFontDropdown(false); }}
+                          >
+                            {font}
+                          </button>
+                        ))}
+                        <div className="p-2 border-t border-border">
+                          <label className="flex items-center justify-center w-full py-2 bg-muted border border-border hover:border-primary hover:text-primary transition-colors cursor-pointer text-xs font-mono uppercase tracking-widest">
+                            <Upload className="w-3 h-3 mr-2" /> Upload Font
+                            <input type="file" accept=".ttf,.otf,.woff,.woff2" className="hidden" onChange={handleFontUpload} />
+                          </label>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -584,7 +857,7 @@ export function BannerForge() {
                     TEXT EFFECTS
                   </label>
                   <div className="grid grid-cols-2 gap-2">
-                    {["None", "3D", "Neon", "Outline", "Drop Shadow", "Glitch", "Vintage"].map((effect) => (
+                    {["None", "3D", "Neon", "Outline", "Drop Shadow", "Glitch", "Vintage", "Pop Art", "Floating", "Glow", "Cyberpunk", "Double", "Soft"].map((effect) => (
                       <button
                         key={effect}
                         className="py-2 px-2 bg-muted border border-border hover:border-white transition-colors text-[10px] font-mono uppercase tracking-widest"
@@ -611,14 +884,15 @@ export function BannerForge() {
                       <div className="fixed inset-0" onClick={() => setShowColorPicker(false)} />
                       <div className="relative">
                         <SketchPicker 
-                          color={(activeObject as fabric.IText).fill as string || "#ffffff"} 
-                          onChange={(color) => changeTextColor(color.hex)} 
+                          color={(activeObject as fabric.IText).fill as string || "#F5F1DC"} 
+                          onChange={(color) => changeTextColor(color.hex, true)} 
+                          onChangeComplete={(color) => { changeTextColor(color.hex, true); saveHistory(); }}
                         />
                       </div>
                     </div>
                   )}
                   <div className="flex gap-2">
-                    {["#ffffff", "#0099ff", "#d5dbe6", "#04070d"].map((color) => (
+                    {["#F5F1DC", "#0046FF", "#73C8D2", "#04070d"].map((color) => (
                       <button
                         key={color}
                         className="w-8 h-8 rounded-none border border-transparent hover:border-white transition-all shadow-sm"
@@ -631,22 +905,41 @@ export function BannerForge() {
               </div>
             )}
 
+            {activeObject && activeObject.type === "image" && (
+              <div className="space-y-2 pt-4 border-t border-border">
+                <div className="flex justify-between items-center">
+                  <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
+                    IMAGE BLUR
+                  </label>
+                  <span className="text-[10px] font-mono text-primary">{imageBlurIntensity.toFixed(2)}</span>
+                </div>
+                <input 
+                  type="range" min="0" max="1" step="0.05" 
+                  value={imageBlurIntensity}
+                  onChange={(e) => applyImageBlur(parseFloat(e.target.value))}
+                  onMouseUp={saveHistory}
+                  onTouchEnd={saveHistory}
+                  className="w-full accent-primary h-1 bg-muted rounded-lg appearance-none cursor-pointer"
+                />
+              </div>
+            )}
+
             <div className="space-y-2 pt-4 border-t border-border">
               <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
                 NEON GLOW
               </label>
               <div className="flex gap-3">
                 <button
-                  className="w-10 h-10 rounded-none bg-primary border border-transparent hover:border-white transition-all shadow-[0_0_15px_rgba(0,153,255,0.5)]"
-                  onClick={() => applyGlow("#0099ff")}
+                  className="w-10 h-10 rounded-none bg-primary border border-transparent hover:border-white transition-all shadow-[0_0_15px_rgba(0,70,255,0.5)]"
+                  onClick={() => applyGlow("#0046FF")}
                 />
                 <button
-                  className="w-10 h-10 rounded-none bg-secondary border border-transparent hover:border-white transition-all shadow-[0_0_15px_rgba(213,219,230,0.5)]"
-                  onClick={() => applyGlow("#d5dbe6")}
+                  className="w-10 h-10 rounded-none bg-secondary border border-transparent hover:border-white transition-all shadow-[0_0_15px_rgba(115,200,210,0.5)]"
+                  onClick={() => applyGlow("#73C8D2")}
                 />
                 <button
-                  className="w-10 h-10 rounded-none bg-foreground border border-transparent hover:border-gray-400 transition-all shadow-[0_0_15px_rgba(255,255,255,0.5)]"
-                  onClick={() => applyGlow("#FFFFFF")}
+                  className="w-10 h-10 rounded-none bg-foreground border border-transparent hover:border-gray-400 transition-all shadow-[0_0_15px_rgba(245,241,220,0.5)]"
+                  onClick={() => applyGlow("#F5F1DC")}
                 />
                 <button
                   className="w-10 h-10 rounded-none bg-transparent border border-border hover:border-white transition-all flex items-center justify-center text-xs text-muted-foreground hover:text-foreground"
@@ -661,6 +954,59 @@ export function BannerForge() {
                   Ø
                 </button>
               </div>
+            </div>
+
+            <div className="flex gap-2 pt-4 border-t border-border">
+              <button
+                className="flex-1 py-2 bg-muted border border-border hover:border-white transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50"
+                disabled={!activeObject}
+                onClick={() => alignObject('left')}
+                title="Align Left"
+              >
+                <AlignLeft className="h-4 w-4" />
+              </button>
+              <button
+                className="flex-1 py-2 bg-muted border border-border hover:border-white transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50"
+                disabled={!activeObject}
+                onClick={() => alignObject('center')}
+                title="Align Center"
+              >
+                <AlignCenter className="h-4 w-4" />
+              </button>
+              <button
+                className="flex-1 py-2 bg-muted border border-border hover:border-white transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50"
+                disabled={!activeObject}
+                onClick={() => alignObject('right')}
+                title="Align Right"
+              >
+                <AlignRight className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex gap-2 pt-2">
+              <button
+                className="flex-1 py-2 bg-muted border border-border hover:border-white transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50"
+                disabled={!activeObject}
+                onClick={() => alignObject('top')}
+                title="Align Top"
+              >
+                <AlignVerticalSpaceAround className="h-4 w-4 rotate-90" />
+              </button>
+              <button
+                className="flex-1 py-2 bg-muted border border-border hover:border-white transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50"
+                disabled={!activeObject}
+                onClick={() => alignObject('middle')}
+                title="Align Middle"
+              >
+                <AlignHorizontalSpaceAround className="h-4 w-4" />
+              </button>
+              <button
+                className="flex-1 py-2 bg-muted border border-border hover:border-white transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50"
+                disabled={!activeObject}
+                onClick={() => alignObject('bottom')}
+                title="Align Bottom"
+              >
+                <AlignVerticalSpaceAround className="h-4 w-4 rotate-90" />
+              </button>
             </div>
 
             <div className="flex gap-2 pt-4 border-t border-border">
@@ -710,7 +1056,7 @@ export function BannerForge() {
             </div>
 
             <button
-              className="w-full py-3 px-4 bg-transparent border border-border text-foreground hover:border-[#d5dbe6] hover:text-secondary transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-transparent border border-border text-foreground hover:border-[#73C8D2] hover:text-secondary transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={!activeObject || activeObject.type !== "image"}
               onClick={() => {
                 if (!canvas) return;
@@ -731,7 +1077,7 @@ export function BannerForge() {
             </button>
 
             <button
-              className="w-full py-3 px-4 bg-transparent border border-[#FF4444] text-[#FF4444] hover:bg-[#FF4444] hover:text-foreground transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 px-4 bg-transparent border border-[#FF9013] text-[#FF9013] hover:bg-[#FF9013] hover:text-foreground transition-colors flex items-center justify-center text-xs font-mono uppercase tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={!activeObject}
               onClick={deleteSelected}
             >
@@ -773,13 +1119,87 @@ export function BannerForge() {
             </button>
           </div>
           <button
-            className="px-8 py-4 bg-secondary text-background font-bold uppercase tracking-widest text-sm hover:bg-[#ffffff] transition-colors shadow-[0_0_20px_rgba(213,219,230,0.3)] flex items-center"
+            className="px-8 py-4 bg-secondary text-background font-bold uppercase tracking-widest text-sm hover:bg-[#F5F1DC] transition-colors shadow-[0_0_20px_rgba(115,200,210,0.3)] flex items-center"
             onClick={downloadBanner}
           >
             <Download className="mr-3 h-5 w-5" /> Download Banner
           </button>
         </div>
       </div>
+
+      {/* Asset Drawer */}
+      {(showStickers || showBackgrounds || show3DAssets) && (
+        <>
+          {/* Subtle backdrop that doesn't black out the screen, just prevents clicks on canvas if on mobile, but on desktop we can leave it transparent or very light */}
+          <div 
+            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px] lg:hidden" 
+            onClick={() => { setShowStickers(false); setShowBackgrounds(false); setShow3DAssets(false); }} 
+          />
+          
+          <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[400px] bg-background border-l border-border shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
+            <div className="p-4 border-b border-border flex justify-between items-center bg-muted/30">
+              <div>
+                <h3 className="font-bold text-lg uppercase tracking-tighter">
+                  {showStickers ? "Sticker Pack" : showBackgrounds ? "Background Library" : show3DAssets ? "3D Assets" : ""}
+                </h3>
+                <p className="text-[10px] text-muted-foreground font-mono mt-1">
+                  {showStickers ? "Add expressive elements" : showBackgrounds ? "Select a canvas background" : show3DAssets ? "Premium 3D shapes" : ""}
+                </p>
+              </div>
+              <button 
+                onClick={() => { setShowStickers(false); setShowBackgrounds(false); setShow3DAssets(false); }} 
+                className="text-muted-foreground hover:text-foreground transition-colors p-2 rounded-full hover:bg-muted"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="p-4 overflow-y-auto flex-1 custom-scrollbar">
+              {showStickers && (
+                <div className="grid grid-cols-3 gap-3">
+                  {Array.from({ length: 32 }).map((_, i) => {
+                    const url = `https://api.dicebear.com/7.x/bottts/svg?seed=sticker${i}&backgroundColor=transparent`;
+                    return (
+                      <button key={i} className="group aspect-square bg-muted rounded-lg border border-border hover:border-primary p-2 flex items-center justify-center transition-all hover:shadow-md hover:-translate-y-1" onClick={() => addStickerFromUrl(url)}>
+                        <img src={url} alt={`Sticker ${i+1}`} className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3" />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {showBackgrounds && (
+                <div className="grid grid-cols-2 gap-3">
+                  {['abstract', 'neon', 'gradient', 'texture', 'space', 'cyberpunk', 'dark', 'holographic', 'liquid', 'geometric', 'retro', 'synthwave', 'minimal', 'architecture', 'nature', 'technology'].map((keyword, i) => {
+                    const safeUrl = `https://picsum.photos/seed/${keyword}/800/400`;
+                    return (
+                      <button key={i} className="group aspect-video bg-muted rounded-lg border border-border hover:border-primary overflow-hidden relative shadow-sm transition-all hover:shadow-md hover:-translate-y-1" onClick={() => setBackgroundImage(safeUrl)}>
+                        <img src={safeUrl} alt={keyword} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+                          <span className="text-white font-mono text-[10px] uppercase tracking-wider">{keyword}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {show3DAssets && (
+                <div className="grid grid-cols-3 gap-3">
+                  {Array.from({ length: 32 }).map((_, i) => {
+                    const url = `https://api.dicebear.com/7.x/shapes/svg?seed=bulk3d${i}&backgroundColor=transparent`;
+                    return (
+                      <button key={i} className="group aspect-square bg-muted rounded-lg border border-border hover:border-[#73C8D2] p-2 flex items-center justify-center transition-all hover:shadow-md hover:-translate-y-1" onClick={() => addStickerFromUrl(url)}>
+                        <img src={url} alt={`3D Asset ${i+1}`} className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12" />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

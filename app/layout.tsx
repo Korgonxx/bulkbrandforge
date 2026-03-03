@@ -1,7 +1,19 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, IBM_Plex_Mono, Anton, Space_Grotesk, Outfit } from "next/font/google";
+import { 
+  Plus_Jakarta_Sans, 
+  IBM_Plex_Mono, 
+  Anton, 
+  Space_Grotesk, 
+  Outfit,
+  Inter,
+  Roboto,
+  Playfair_Display,
+  Cormorant_Garamond,
+  Libre_Baskerville
+} from "next/font/google";
 import "./globals.css"; // Global styles
 import { ThemeProvider } from "@/components/theme-provider";
+import { CreatorPopup } from "@/components/CreatorPopup";
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -30,6 +42,34 @@ const outfit = Outfit({
   variable: "--font-outfit",
 });
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
+const roboto = Roboto({
+  weight: ["400", "500", "700"],
+  subsets: ["latin"],
+  variable: "--font-roboto",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+});
+
+const cormorant = Cormorant_Garamond({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-cormorant",
+});
+
+const libre = Libre_Baskerville({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-libre",
+});
+
 export const metadata: Metadata = {
   title: "BULK BRAND FORGE",
   description:
@@ -44,7 +84,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${jakarta.variable} ${plexMono.variable} ${anton.variable} ${spaceGrotesk.variable} ${outfit.variable}`}
+      className={`${jakarta.variable} ${plexMono.variable} ${anton.variable} ${spaceGrotesk.variable} ${outfit.variable} ${inter.variable} ${roboto.variable} ${playfair.variable} ${cormorant.variable} ${libre.variable}`}
       suppressHydrationWarning
     >
       <body
@@ -58,6 +98,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <CreatorPopup />
         </ThemeProvider>
       </body>
     </html>

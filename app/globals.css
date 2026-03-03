@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700&family=Space+Grotesk:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;500;600;700&family=Outfit:wght@400;700&family=Plus+Jakarta+Sans:wght@400;700&family=Space+Grotesk:wght@400;700&family=Audiowide&family=Bangers&family=Bebas+Neue&family=Caveat:wght@400..700&family=Chakra+Petch:wght@300;400;500;600;700&family=Cinzel:wght@400..900&family=Creepster&family=Dancing+Script:wght@400..700&family=Fredoka:wght@300..700&family=Lobster&family=Monoton&family=Orbitron:wght@400..900&family=Oswald:wght@200..700&family=Pacifico&family=Permanent+Marker&family=Press+Start+2P&family=Righteous&family=Russo+One&family=Silkscreen:wght@400;700&family=Syncopate:wght@400;700&family=Syne:wght@400..800&display=swap');
 
 @theme {
   --color-background: var(--background);
@@ -24,34 +24,34 @@
 
 @layer base {
   :root {
-    --background: #ffffff;
+    --background: #F5F1DC;
     --foreground: #04070d;
-    --primary: #0099ff;
+    --primary: #0046FF;
     --primary-foreground: #ffffff;
-    --secondary: #d5dbe6;
+    --secondary: #73C8D2;
     --secondary-foreground: #04070d;
-    --muted: #f3f4f6;
+    --muted: #e5e0c8;
     --muted-foreground: #6b7280;
-    --accent: #d5dbe6;
-    --accent-foreground: #04070d;
-    --border: #e5e7eb;
-    --input: #e5e7eb;
-    --ring: #0099ff;
+    --accent: #FF9013;
+    --accent-foreground: #ffffff;
+    --border: #d1cbb0;
+    --input: #d1cbb0;
+    --ring: #0046FF;
   }
   .dark {
     --background: #04070d;
-    --foreground: #ffffff;
-    --primary: #0099ff;
+    --foreground: #F5F1DC;
+    --primary: #0046FF;
     --primary-foreground: #ffffff;
-    --secondary: #d5dbe6;
+    --secondary: #73C8D2;
     --secondary-foreground: #04070d;
     --muted: #1b1a14;
     --muted-foreground: #a3a3a3;
-    --accent: #d5dbe6;
-    --accent-foreground: #04070d;
+    --accent: #FF9013;
+    --accent-foreground: #ffffff;
     --border: #2a2a2a;
     --input: #2a2a2a;
-    --ring: #0099ff;
+    --ring: #0046FF;
   }
 }
 
@@ -71,7 +71,7 @@
 .glass-panel {
   background: rgba(27, 26, 20, 0.6);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 153, 255, 0.2);
+  border: 1px solid rgba(0, 70, 255, 0.2);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
@@ -80,33 +80,33 @@
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(245, 241, 220, 0.6);
 }
 
 .neon-text-blue {
   text-shadow:
-    0 0 10px rgba(0, 153, 255, 0.7),
-    0 0 20px rgba(0, 153, 255, 0.5);
+    0 0 10px rgba(0, 70, 255, 0.7),
+    0 0 20px rgba(0, 70, 255, 0.5);
 }
 
 .neon-text-light {
   text-shadow:
-    0 0 10px rgba(213, 219, 230, 0.7),
-    0 0 20px rgba(213, 219, 230, 0.5);
+    0 0 10px rgba(115, 200, 210, 0.7),
+    0 0 20px rgba(115, 200, 210, 0.5);
 }
 
 .neon-border-blue {
   box-shadow:
-    0 0 10px rgba(0, 153, 255, 0.5),
-    inset 0 0 10px rgba(0, 153, 255, 0.2);
-  border-color: rgba(0, 153, 255, 0.5);
+    0 0 10px rgba(0, 70, 255, 0.5),
+    inset 0 0 10px rgba(0, 70, 255, 0.2);
+  border-color: rgba(0, 70, 255, 0.5);
 }
 
 .neon-border-light {
   box-shadow:
-    0 0 10px rgba(213, 219, 230, 0.5),
-    inset 0 0 10px rgba(213, 219, 230, 0.2);
-  border-color: rgba(213, 219, 230, 0.5);
+    0 0 10px rgba(115, 200, 210, 0.5),
+    inset 0 0 10px rgba(115, 200, 210, 0.2);
+  border-color: rgba(115, 200, 210, 0.5);
 }
 
 /* Custom Scrollbar */
