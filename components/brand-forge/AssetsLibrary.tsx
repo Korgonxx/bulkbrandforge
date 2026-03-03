@@ -293,8 +293,20 @@ export function AssetsLibrary() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-px bg-[#2a2a2a] border border-border">
-          {Array.from({ length: 18 }).map((_, i) => {
-            const url = `https://api.dicebear.com/7.x/bottts/svg?seed=sticker${i}&backgroundColor=transparent`;
+          {[
+            "1-lfg.png",
+            "2-downbad.png",
+            "3-salute.png",
+            "4-uwu.png",
+            "5-liquidated.png",
+            "6-notliquidated.png",
+            "7-pray.png",
+            "8-fighter.png",
+            "9-heart.png",
+            "10-gBULK.png",
+            "11-wave.png",
+          ].map((filename, i) => {
+            const url = `/stickers/${filename}`;
             return (
               <div
                 key={i}
@@ -303,18 +315,17 @@ export function AssetsLibrary() {
                 <div className="relative w-full h-full flex items-center justify-center">
                   <Image
                     src={url}
-                    alt={`Sticker ${i + 1}`}
+                    alt={filename}
                     fill
                     className="object-contain transition-transform duration-500 group-hover:scale-125 p-4"
-                    referrerPolicy="no-referrer"
                   />
                 </div>
                 <span className="text-muted-foreground font-mono text-[10px] uppercase tracking-widest mt-2 relative z-10">
-                  Sticker {i + 1}
+                  {filename.split("-")[1]?.split(".")[0] || filename}
                 </span>
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm z-20">
                   <button 
-                    onClick={(e) => handleDownload(e, url, `sticker-${i+1}.svg`)}
+                    onClick={(e) => handleDownload(e, url, filename)}
                     className="p-3 bg-primary text-foreground rounded-full hover:bg-foreground hover:text-primary transition-colors"
                   >
                     <ArrowDown className="h-6 w-6" />
@@ -346,20 +357,29 @@ export function AssetsLibrary() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => {
-            const url = `https://picsum.photos/seed/bulkbg${i}/800/400?blur=2`;
+          {[
+            "Card_Stock Exchange Era.png",
+            "Card_BULK Era_Metadata.png",
+            "Card_Phoenician Roman Era.png",
+            "Card_Prehistoric Era.png",
+            "Card_Industrial Victorian Era.png",
+            "Card_Viking Era.png",
+            "Card_BULK Era_Banner.png",
+            "Card_TransSahara Era.png",
+          ].map((filename, i) => {
+            const url = `/backgrounds/${filename}`;
             return (
               <div key={i} className="group relative aspect-video bg-muted border border-border overflow-hidden rounded-lg">
-                <Image src={url} alt={`Background ${i+1}`} fill className="object-cover transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
+                <Image src={url} alt={filename} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
                   <button 
-                    onClick={(e) => handleDownload(e, url, `background-${i+1}.jpg`)} 
+                    onClick={(e) => handleDownload(e, url, filename)} 
                     className="p-4 bg-background/80 backdrop-blur-md text-foreground rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 transform translate-y-4 group-hover:translate-y-0"
                   >
                     <Download className="h-6 w-6" />
                   </button>
-                  <span className="mt-4 font-mono text-xs tracking-widest text-white uppercase">Background {i+1}</span>
+                  <span className="mt-4 font-mono text-xs tracking-widest text-white uppercase">{filename.split("_")[1]?.split(".")[0] || filename}</span>
                 </div>
               </div>
             );
@@ -387,21 +407,24 @@ export function AssetsLibrary() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, i) => {
-            const url = `main/public/3d-assets/tpose_back.pngseed=bulk3d${i}&backgroundColor=transparent`;
+          {[
+            "tpose_back.png",
+            "tpose_side.png",
+          ].map((filename, i) => {
+            const url = `/3d-assets/${filename}`;
             return (
               <div key={i} className="group relative aspect-square bg-muted/50 border border-border overflow-hidden rounded-lg p-6 flex flex-col items-center justify-center hover:bg-muted transition-colors duration-300">
                 <div className="relative w-full h-full flex items-center justify-center">
-                  <Image src={main/public/3d-assets/tpose_back.png} alt={`3D Asset ${i+1}`} fill className="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 drop-shadow-2xl" referrerPolicy="no-referrer" />
+                  <Image src={url} alt={filename} fill className="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 drop-shadow-2xl" />
                 </div>
                 <div className="absolute inset-0 bg-background/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center z-20">
                   <button 
-                    onClick={(e) => handleDownload(e, url, `3d-asset-${i+1}.svg`)} 
+                    onClick={(e) => handleDownload(e, url, filename)} 
                     className="p-3 bg-secondary text-secondary-foreground rounded-full hover:bg-foreground hover:text-background transition-all duration-300 transform scale-90 group-hover:scale-100"
                   >
                     <Download className="h-5 w-5" />
                   </button>
-                  <span className="mt-3 font-mono text-[10px] tracking-widest text-foreground uppercase">Asset {i+1}</span>
+                  <span className="mt-3 font-mono text-[10px] tracking-widest text-foreground uppercase">{filename.split(".")[0]}</span>
                 </div>
               </div>
             );
