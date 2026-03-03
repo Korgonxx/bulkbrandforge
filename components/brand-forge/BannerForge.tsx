@@ -36,6 +36,9 @@ export function BannerForge() {
   const [canRedo, setCanRedo] = useState(false);
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showBgColorPicker, setShowBgColorPicker] = useState(false);
+  const [showStickerPicker, setShowStickerPicker] = useState(false);
+  const [showBackgroundPicker, setShowBackgroundPicker] = useState(false);
+  const [show3dPicker, setShow3dPicker] = useState(false);
 
   const saveHistory = useCallback(() => {
     const currentCanvas = fabricCanvasRef.current;
@@ -249,13 +252,36 @@ export function BannerForge() {
     reader.readAsDataURL(file);
   };
 
-  const addSticker = () => {
+  // asset lists matching public folder
+  const stickerFiles = [
+    "1-lfg.png",
+    "2-downbad.png",
+    "3-salute.png",
+    "4-uwu.png",
+    "5-liquidated.png",
+    "6-notliquidated.png",
+    "7-pray.png",
+    "8-fighter.png",
+    "9-heart.png",
+    "10-gBULK.png",
+    "11-wave.png",
+  ];
+  const backgroundFiles = [
+    "Card_Stock Exchange Era.png",
+    "Card_BULK Era_Metadata.png",
+    "Card_Phoenician Roman Era.png",
+    "Card_Prehistoric Era.png",
+    "Card_Industrial Victorian Era.png",
+    "Card_Viking Era.png",
+    "Card_BULK Era_Banner.png",
+    "Card_TransSahara Era.png",
+  ];
+  const asset3dFiles = ["tpose_back.png", "tpose_front.png", "tpose_side.png"];
+
+  const addImageToCanvas = (url: string, scale = 100) => {
     if (!canvas) return;
-    const randomSeed = Math.floor(Math.random() * 1000);
-    const url = `https://api.dicebear.com/7.x/bottts/svg?seed=sticker${randomSeed}&backgroundColor=transparent`;
-    
     fabric.Image.fromURL(url).then((img) => {
-      img.scaleToWidth(100);
+      img.scaleToWidth(scale);
       img.set({
         left: 400,
         top: 200,
@@ -264,7 +290,35 @@ export function BannerForge() {
       });
       canvas.add(img);
       canvas.setActiveObject(img);
+      saveHistory();
     });
+  };
+
+  const addSticker = (url?: string) => {
+    // if url is provided use it else fallback to random
+    if (!canvas) return;
+    if (url) {
+      addImageToCanvas(url, 100);
+      return;
+    }
+    const randomSeed = Math.floor(Math.random() * 1000);
+    const rndUrl = `https://api.dicebear.com/7.x/bottts/svg?seed=sticker${randomSeed}&backgroundColor=transparent`;
+    addImageToCanvas(rndUrl, 100);
+  };
+
+  const setBackgroundFromUrl = (url: string) => {
+    if (!canvas) return;
+    fabric.Image.fromURL(url).then((img) => {
+      img.scaleToWidth(canvas.getWidth());
+      img.scaleToHeight(canvas.getHeight());
+      // fabric types omit setBackgroundImage signature, cast to any
+      (canvas as any).setBackgroundImage(img, canvas.renderAll.bind(canvas));
+      saveHistory();
+    });
+  };
+
+  const add3dAsset = (url: string) => {
+    addImageToCanvas(url, 150);
   };
 
   const deleteSelected = () => {
@@ -401,12 +455,67 @@ export function BannerForge() {
               </button>
             </div>
 
-            <button 
-              className="w-full py-3 px-4 bg-muted border border-border hover:border-primary hover:text-primary transition-colors flex items-center text-xs font-mono uppercase tracking-widest"
-              onClick={addSticker}
-            >
-              <Layers className="mr-3 h-4 w-4" /> Add Sticker
-            </button>
+            <div className="space-y-2">
+              <button 
+                className="w-full py-3 px-4 bg-muted border border-border hover:border-primary hover:text-primary transition-colors flex items-center text-xs font-mono uppercase tracking-widest"
+                onClick={() => setShowStickerPicker(!showStickerPicker)}
+              >
+                <Layers className="mr-3 h-4 w-4" /> Choose Sticker
+              </button>
+              <button 
+                className="w-full py-3 px-4 bg-muted border border-border hover:border-primary hover:text-primary transition-colors flex items-center text-xs font-mono uppercase tracking-widest"
+                onClick={() => addSticker()}
+              >
+                <Layers className="mr-3 h-4 w-4" /> Random Sticker
+              </button>
+            </div>
+
+            {/* pickers */}
+            {showStickerPicker && (
+              <div className="grid grid-cols-3 gap-2 p-2 border border-border bg-background">
+                {stickerFiles.map((f) => (
+                  <img
+                    key={f}
+                    src={`/stickers/${f}`}
+                    className="w-full h-auto cursor-pointer"
+                    onClick={() => {
+                      addSticker(`/stickers/${f}`);
+                      setShowStickerPicker(false);
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+            {showBackgroundPicker && (
+              <div className="grid grid-cols-2 gap-2 p-2 border border-border bg-background">
+                {backgroundFiles.map((f) => (
+                  <img
+                    key={f}
+                    src={`/backgrounds/${f}`}
+                    className="w-full h-auto cursor-pointer"
+                    onClick={() => {
+                      setBackgroundFromUrl(`/backgrounds/${f}`);
+                      setShowBackgroundPicker(false);
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+            {show3dPicker && (
+              <div className="grid grid-cols-3 gap-2 p-2 border border-border bg-background">
+                {asset3dFiles.map((f) => (
+                  <img
+                    key={f}
+                    src={`/3d-assets/${f}`}
+                    className="w-full h-auto cursor-pointer"
+                    onClick={() => {
+                      add3dAsset(`/3d-assets/${f}`);
+                      setShow3dPicker(false);
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
