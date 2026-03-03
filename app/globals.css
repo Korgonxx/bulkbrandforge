@@ -24,30 +24,32 @@
 
 @layer base {
   :root {
-    --background: #F5F1DC;
-    --foreground: #04070d;
+    /* light theme: white background with blue accents */
+    --background: #ffffff;
+    --foreground: #04070d; /* keep dark text for readability */
     --primary: #0046FF;
     --primary-foreground: #ffffff;
-    --secondary: #73C8D2;
-    --secondary-foreground: #04070d;
-    --muted: #e5e0c8;
-    --muted-foreground: #6b7280;
-    --accent: #FF9013;
+    --secondary: #002ba8;
+    --secondary-foreground: #ffffff;
+    --muted: #e8e8e8;
+    --muted-foreground: #666666;
+    --accent: #0046FF;
     --accent-foreground: #ffffff;
-    --border: #d1cbb0;
-    --input: #d1cbb0;
+    --border: #e8e8e8;
+    --input: #e8e8e8;
     --ring: #0046FF;
   }
   .dark {
+    /* dark theme keeps blue primary but uses dark background */
     --background: #04070d;
-    --foreground: #F5F1DC;
+    --foreground: #ffffff;
     --primary: #0046FF;
     --primary-foreground: #ffffff;
-    --secondary: #73C8D2;
-    --secondary-foreground: #04070d;
-    --muted: #1b1a14;
-    --muted-foreground: #a3a3a3;
-    --accent: #FF9013;
+    --secondary: #0066ff;
+    --secondary-foreground: #ffffff;
+    --muted: #1a1a1a;
+    --muted-foreground: #999999;
+    --accent: #0046FF;
     --accent-foreground: #ffffff;
     --border: #2a2a2a;
     --input: #2a2a2a;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import Image from "next/image";
 import {
@@ -16,6 +16,12 @@ import confetti from "canvas-confetti";
 
 export function AssetsLibrary() {
   const [copied, setCopied] = useState<string | null>(null);
+  const [assets, setAssets] = useState<{
+    logos: string[];
+    stickers: string[];
+    backgrounds: string[];
+    threeD: string[];
+  }>({ logos: [], stickers: [], backgrounds: [], threeD: [] });
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -56,6 +62,21 @@ export function AssetsLibrary() {
     }
   };
 
+  // load asset lists from server route on mount
+  useEffect(() => {
+    fetch('/api/assets')
+      .then((res) => res.json())
+      .then((data) => {
+        setAssets({
+          logos: data.logos || [],
+          stickers: data.stickers || [],
+          backgrounds: data.backgrounds || [],
+          threeD: data['3d-assets'] || [],
+        });
+      })
+      .catch((err) => console.error('failed to load assets', err));
+  }, []);
+
   return (
     <div className="space-y-24 pb-20">
       {/* Logos Section */}
@@ -78,42 +99,39 @@ export function AssetsLibrary() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {["Primary Logo", "Icon Only", "Wordmark", "Monochrome"].map(
-            (logo, i) => (
+          {assets.logos.length === 0 && <p className="text-center col-span-full text-muted-foreground">No logos found</p>}
+          {assets.logos.map((src, i) => {
+            const name = src.split('/').pop() || `logo-${i + 1}`;
+            return (
               <div key={i} className="group flex flex-col">
                 <div className="h-48 bg-muted border border-border flex items-center justify-center relative overflow-hidden group-hover:border-primary transition-colors p-8">
                   <div className="relative w-full h-full flex items-center justify-center">
                     <Image
-                      src={`https://api.dicebear.com/7.x/shapes/svg?seed=logo${i}&backgroundColor=transparent`}
-                      alt={logo}
+                      src={src}
+                      alt={name}
                       fill
-                      className={`object-contain transition-transform duration-500 group-hover:scale-110 ${i === 3 ? "grayscale" : ""}`}
-                      referrerPolicy="no-referrer"
+                      className="object-contain transition-transform duration-500 group-hover:scale-110"
                     />
                   </div>
-                  <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
                 <div className="p-4 border border-t-0 border-border bg-background flex flex-col space-y-4">
                   <div>
                     <h3 className="font-bold uppercase tracking-wider">
-                      {logo}
+                      {name}
                     </h3>
-                    <p className="text-xs text-muted-foreground font-mono mt-1">
-                      Standard usage
-                    </p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="flex-1 py-2 bg-muted border border-border hover:border-primary hover:text-primary transition-colors text-xs font-mono uppercase tracking-widest flex items-center justify-center">
-                      PNG
-                    </button>
-                    <button className="flex-1 py-2 bg-muted border border-border hover:border-[#d5dbe6] hover:text-secondary transition-colors text-xs font-mono uppercase tracking-widest flex items-center justify-center">
-                      SVG
+                    <button
+                      className="flex-1 py-2 bg-muted border border-border hover:border-primary hover:text-primary transition-colors text-xs font-mono uppercase tracking-widest flex items-center justify-center"
+                      onClick={(e) => handleDownload(e, src, name)}
+                    >
+                      Download
                     </button>
                   </div>
                 </div>
               </div>
-            ),
-          )}
+            );
+          })}
         </div>
       </section>
 
@@ -293,8 +311,9 @@ export function AssetsLibrary() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-px bg-[#2a2a2a] border border-border">
-          {Array.from({ length: 11 }).map((_, i) => {
-            const url = `https://api.dicebear.com/7.x/bottts/svg?seed=sticker${i}&backgroundColor=transparent`;
+          {assets.stickers.length === 0 && <p className="text-center col-span-full text-muted-foreground">No stickers found</p>}
+          {assets.stickers.map((url, i) => {
+            const name = url.split('/').pop() || `sticker-${i + 1}`;
             return (
               <div
                 key={i}
@@ -303,18 +322,17 @@ export function AssetsLibrary() {
                 <div className="relative w-full h-full flex items-center justify-center">
                   <Image
                     src={url}
-                    alt={`Sticker ${i + 1}`}
+                    alt={name}
                     fill
                     className="object-contain transition-transform duration-500 group-hover:scale-125 p-4"
-                    referrerPolicy="no-referrer"
                   />
                 </div>
                 <span className="text-muted-foreground font-mono text-[10px] uppercase tracking-widest mt-2 relative z-10">
-                  Sticker {i + 1}
+                  {name}
                 </span>
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm z-20">
                   <button 
-                    onClick={(e) => handleDownload(e, url, `sticker-${i+1}.svg`)}
+                    onClick={(e) => handleDownload(e, url, name)}
                     className="p-3 bg-primary text-foreground rounded-full hover:bg-foreground hover:text-primary transition-colors"
                   >
                     <ArrowDown className="h-6 w-6" />
@@ -346,20 +364,21 @@ export function AssetsLibrary() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 6 }).map((_, i) => {
-            const url = `https://picsum.photos/seed/bulkbg${i}/800/400?blur=2`;
+          {assets.backgrounds.length === 0 && <p className="text-center col-span-full text-muted-foreground">No backgrounds found</p>}
+          {assets.backgrounds.map((url, i) => {
+            const name = url.split('/').pop() || `background-${i + 1}`;
             return (
               <div key={i} className="group relative aspect-video bg-muted border border-border overflow-hidden rounded-lg">
-                <Image src={url} alt={`Background ${i+1}`} fill className="object-cover transition-transform duration-700 group-hover:scale-110" referrerPolicy="no-referrer" />
+                <Image src={url} alt={name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
                   <button 
-                    onClick={(e) => handleDownload(e, url, `background-${i+1}.jpg`)} 
+                    onClick={(e) => handleDownload(e, url, name)} 
                     className="p-4 bg-background/80 backdrop-blur-md text-foreground rounded-full hover:bg-primary hover:text-primary-foreground transition-all duration-300 transform translate-y-4 group-hover:translate-y-0"
                   >
                     <Download className="h-6 w-6" />
                   </button>
-                  <span className="mt-4 font-mono text-xs tracking-widest text-white uppercase">Background {i+1}</span>
+                  <span className="mt-4 font-mono text-xs tracking-widest text-white uppercase">{name}</span>
                 </div>
               </div>
             );
@@ -387,21 +406,22 @@ export function AssetsLibrary() {
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          {Array.from({ length: 8 }).map((_, i) => {
-            const url = `https://api.dicebear.com/7.x/shapes/svg?seed=bulk3d${i}&backgroundColor=transparent`;
+          {assets.threeD.length === 0 && <p className="text-center col-span-full text-muted-foreground">No 3D assets found</p>}
+          {assets.threeD.map((url, i) => {
+            const name = url.split('/').pop() || `asset-${i + 1}`;
             return (
               <div key={i} className="group relative aspect-square bg-muted/50 border border-border overflow-hidden rounded-lg p-6 flex flex-col items-center justify-center hover:bg-muted transition-colors duration-300">
                 <div className="relative w-full h-full flex items-center justify-center">
-                  <Image src={url} alt={`3D Asset ${i+1}`} fill className="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 drop-shadow-2xl" referrerPolicy="no-referrer" />
+                  <Image src={url} alt={name} fill className="object-contain transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 drop-shadow-2xl" />
                 </div>
                 <div className="absolute inset-0 bg-background/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center z-20">
                   <button 
-                    onClick={(e) => handleDownload(e, url, `3d-asset-${i+1}.svg`)} 
+                    onClick={(e) => handleDownload(e, url, name)} 
                     className="p-3 bg-secondary text-secondary-foreground rounded-full hover:bg-foreground hover:text-background transition-all duration-300 transform scale-90 group-hover:scale-100"
                   >
                     <Download className="h-5 w-5" />
                   </button>
-                  <span className="mt-3 font-mono text-[10px] tracking-widest text-foreground uppercase">Asset {i+1}</span>
+                  <span className="mt-3 font-mono text-[10px] tracking-widest text-foreground uppercase">{name}</span>
                 </div>
               </div>
             );
