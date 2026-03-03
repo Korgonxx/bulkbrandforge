@@ -295,7 +295,7 @@ export function AssetsLibrary() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-px border border-border justify-items-center">
+        <div className="grid grid-cols-6 gap-px border border-border auto-rows-auto">
           {[
             "1-lfg.png",
             "2-downbad.png",
