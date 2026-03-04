@@ -168,7 +168,7 @@ export default function Home() {
               {activeTab === "guidelines" && <Guidelines />}
               {activeTab === "community" && (
                 <div className="flex-1 flex flex-col items-center justify-center py-20">
-                  <div className="glass-panel p-12 rounded-2xl border border-secondary/30 text-center max-w-2xl relative overflow-hidden group">
+                  <div className="bg-white p-12 rounded-2xl border border-border text-center max-w-2xl relative overflow-hidden group text-foreground">
                     <div className="absolute inset-0 bg-gradient-to-br from-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <h2 className="text-4xl font-bold mb-4 neon-text-light relative z-10">
                       COMMUNITY VIBES

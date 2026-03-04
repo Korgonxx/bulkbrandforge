@@ -310,10 +310,14 @@ export function AssetsLibrary() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-px bg-[#2a2a2a] border border-border">
-          {assets.stickers.length === 0 && <p className="text-center col-span-full text-muted-foreground">No stickers found</p>}
-          {assets.stickers.map((url, i) => {
-            const name = url.split('/').pop() || `sticker-${i + 1}`;
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
+          {assets.stickers.length === 0 && (
+            <p className="text-center col-span-full text-muted-foreground">No stickers found</p>
+          )}
+
+          {assets.stickers.slice(0, 11).map((url, i) => {
+            const filename = url.split('/').pop() || `sticker-${i + 1}`;
+            const displayIndex = i + 1;
             return (
               <div
                 key={i}
@@ -322,17 +326,17 @@ export function AssetsLibrary() {
                 <div className="relative w-full h-full flex items-center justify-center">
                   <Image
                     src={url}
-                    alt={name}
+                    alt={filename}
                     fill
                     className="object-contain transition-transform duration-500 group-hover:scale-125 p-4"
                   />
                 </div>
                 <span className="text-muted-foreground font-mono text-[10px] uppercase tracking-widest mt-2 relative z-10">
-                  {name}
+                  {displayIndex}
                 </span>
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm z-20">
-                  <button 
-                    onClick={(e) => handleDownload(e, url, name)}
+                  <button
+                    onClick={(e) => handleDownload(e, url, filename)}
                     className="p-3 bg-primary text-foreground rounded-full hover:bg-foreground hover:text-primary transition-colors"
                   >
                     <ArrowDown className="h-6 w-6" />
